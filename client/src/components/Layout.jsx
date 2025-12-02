@@ -1,20 +1,28 @@
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Layers, Box, Package, LogOut, User } from 'lucide-react';
 import clsx from 'clsx';
+import LogoutModal from './LogoutModal';
 
 const Layout = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-    const handleLogout = () => {
-        // In a real app, show modal first. For now, just logout.
-        // We will implement the modal in the next step.
-        if (window.confirm('Are you sure you want to log out?')) {
-            logout();
-            navigate('/login');
-        }
+    const handleLogoutClick = () => {
+        setIsLogoutModalOpen(true);
+    };
+
+    const handleLogoutConfirm = () => {
+        logout();
+        navigate('/login');
+        setIsLogoutModalOpen(false);
+    };
+
+    const handleLogoutCancel = () => {
+        setIsLogoutModalOpen(false);
     };
 
     const navItems = [
@@ -63,7 +71,7 @@ const Layout = () => {
                 </nav>
                 <div className="p-4 border-t">
                     <button
-                        onClick={handleLogout}
+                        onClick={handleLogoutClick}
                         className="flex items-center w-full px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
                     >
                         <LogOut className="mr-3 h-5 w-5 text-gray-400" />
@@ -91,6 +99,12 @@ const Layout = () => {
                     <Outlet />
                 </main>
             </div>
+
+            <LogoutModal
+                isOpen={isLogoutModalOpen}
+                onClose={handleLogoutCancel}
+                onConfirm={handleLogoutConfirm}
+            />
         </div>
     );
 };
