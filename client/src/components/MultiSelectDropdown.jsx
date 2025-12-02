@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import PropTypes from 'prop_types';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { ChevronDown, Check } from 'lucide-react';
 
