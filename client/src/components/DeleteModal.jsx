@@ -11,48 +11,36 @@ const DeleteModal = ({
   title = 'Delete', 
   message = 'Are you sure you want to delete?' 
 }) => {
-    const newDeleteMessage ='Are you sure you want to delete?' 
   return (
-    // The Modal component handles the white box, rounded corners, and default padding (p-6).
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col p-8">
+      <div className="flex flex-col items-center">
         
-        {/* Header Section: Icon and Title centered together */}
-        <div className="flex items-center justify-center gap-3 mb-4">
-          {/* Red warning icon */}
-          <AlertTriangle 
-            className="text-error shrink-0" 
-            size={32} 
-            strokeWidth={2.5}
-          />
-          {/* Bold black title */}
-          <h2 className="text-2xl font-bold text-neutral-900 leading-none mt-1">
+        {/* Header: Icon and Title centered */}
+        <div className="flex items-center gap-3 mb-3">
+          <AlertTriangle className="text-error" size={40} strokeWidth={2.5} />
+          <h2 className="text-2xl font-bold text-neutral-900 mt-1">
             {title}
           </h2>
         </div>
         
-        {/* Body Text: Centered gray text with margin below */}
+        {/* Message */}
         <p className="text-base text-neutral-500 text-center mb-8">
-          {newDeleteMessage}
+          {message}
         </p>
 
-        {/* Button Row: Two equal-width buttons with a gap */}
+        {/* Buttons */}
         <div className="flex w-full gap-4">
-          {/* "Cancel" Button (Left): White background, gray border, gray text, rounded-pill */}
           <Button 
-            variant="secondary"
+            variant="secondary" 
             onClick={onClose} 
-            // Overriding secondary styles to match the specific outline design
-            className="w-full rounded-pill border border-neutral-300 bg-white text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700 hover:border-neutral-400"
+            className="w-full border-neutral-300 text-neutral-500"
           >
             Cancel
           </Button>
-          
-          {/* "Confirm" Button (Right): Primary purple background, white text, rounded-pill */}
           <Button 
             variant="primary" 
             onClick={onConfirm} 
-            className="w-full rounded-pill shadow-button-primary"
+            className="w-full"
           >
             Confirm
           </Button>
