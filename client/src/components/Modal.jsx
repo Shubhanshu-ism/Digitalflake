@@ -36,13 +36,14 @@ const Modal = ({ isOpen, onClose, children, className = '' }) => {
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-overlay-bg"
+      className="fixed inset-0 z-[1000] flex justify-center items-center p-4 bg-overlay-bg p-4"
       onClick={handleClose}
     >
       <div
         ref={modalRef}
         className={clsx(
-          'relative bg-neutral-white rounded-lg shadow-xl overflow-hidden',
+          'relative bg-neutral-0 rounded-lg shadow-xl overflow-hidden ',
+          
           { 'animate-modal-enter': isOpen && !isAnimatingOut },
           { 'animate-modal-exit': isAnimatingOut },
           className
