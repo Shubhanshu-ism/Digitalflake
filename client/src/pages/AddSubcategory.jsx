@@ -19,7 +19,7 @@ const AddSubcategory = () => {
         const fetchCategories = async () => {
             try {
                 const { data } = await api.get('/categories');
-                setCategories(data.map(cat => ({ value: cat._id, label: cat.name })));
+                setCategories(data.filter(cat => cat.status === 'Active').map(cat => ({ value: cat._id, label: cat.name })));
             } catch (error) {
                 console.error('Error fetching categories:', error);
                 setError('Failed to load categories.');

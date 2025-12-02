@@ -25,8 +25,8 @@ const AddProduct = () => {
                     api.get('/categories'),
                     api.get('/subcategories'),
                 ]);
-                setCategories(categoriesRes.data.map(cat => ({ value: cat._id, label: cat.name })));
-                setAllSubcategories(subcategoriesRes.data);
+                setCategories(categoriesRes.data.filter(cat => cat.status === 'Active').map(cat => ({ value: cat._id, label: cat.name })));
+                setAllSubcategories(subcategoriesRes.data.filter(sub => sub.status === 'Active'));
             } catch (err) {
                 console.error('Error fetching initial data:', err);
                 setError('Failed to load categories or subcategories.');
