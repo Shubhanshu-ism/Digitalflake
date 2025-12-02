@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import loginBg from '../assets/login_bg.png';
+import Button from '../components/Button';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,8 +30,8 @@ const Login = () => {
           <div className="text-center lg:text-left">
              {/* Logo Placeholder */}
             <div className="flex items-center justify-center lg:justify-start mb-8">
-               <div className="h-10 w-10 bg-[#5C218B] rounded flex items-center justify-center text-white font-bold text-xl mr-2">D</div>
-               <span className="text-2xl font-bold text-[#5C218B]">digitalflake</span>
+               <div className="h-10 w-10 bg-primary rounded flex items-center justify-center text-white font-bold text-xl mr-2">D</div>
+               <span className="text-2xl font-bold text-primary">digitalflake</span>
             </div>
             <h2 className="mt-6 text-2xl font-normal text-gray-500">
               Welcome to Digitalflake admin
@@ -50,7 +51,7 @@ const Login = () => {
                     type="email"
                     autoComplete="email"
                     required
-                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
+                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                     placeholder="Email-id"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -69,7 +70,7 @@ const Login = () => {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
+                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -79,7 +80,7 @@ const Login = () => {
 
               <div className="flex items-center justify-end">
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-[#5C218B] hover:text-[#4a1a70]">
+                  <a href="#" className="font-medium text-primary hover:text-primary/80">
                     Forgot Password?
                   </a>
                 </div>
@@ -88,12 +89,17 @@ const Login = () => {
               {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
               <div>
-                <button
-                  type="submit"
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5C218B] hover:bg-[#4a1a70] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5C218B]"
-                >
+                <Button type="submit" variant="primary" className="w-full">
                   Log In
-                </button>
+                </Button>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{' '}
+                  <Link to="/signup" className="font-medium text-primary hover:text-primary/80">
+                    Sign Up
+                  </Link>
+                </p>
               </div>
             </form>
           </div>
@@ -101,7 +107,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:block relative w-0 flex-1 bg-[#F5F5F5]">
+      <div className="hidden lg:block relative w-0 flex-1 bg-neutral-lighter">
         <div className="absolute inset-0 flex items-center justify-center">
             <img
               className="h-3/4 w-auto object-contain"
