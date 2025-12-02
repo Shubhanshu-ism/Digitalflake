@@ -1,67 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import api from '../api/axios';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import ImageUpload from '../components/ImageUpload';
+import Dropdown from '../components/Dropdown';
+import MultiSelectDropdown from '../components/MultiSelectDropdown';
 
 const EditProduct = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
     const [name, setName] = useState('');
     const [categoryId, setCategoryId] = useState('');
-    const [subcategoryId, setSubcategoryId] = useState('');
-    const [categories, setCategories] = useState([]);
-    const [subcategories, setSubcategories] = useState([]);
+    const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState([]);
     const [status, setStatus] = useState('Active');
-    const [image, setImage] = useState(null);
-    const [currentImage, setCurrentImage] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+    const [initialImageUrl, setInitialImageUrl] = useState(null);
+    
+    const [categories, setCategories] = useState([]);
+    const [allSubcategories, setAllSubcategories] = useState([]);
+    const [filteredSubcategories, setFilteredSubcategories] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [categoriesRes, productsRes] = await Promise.all([
+                const [categoriesRes, subcategoriesRes, productRes] = await Promise.all([
                     api.get('/categories'),
-                    api.get('/products')
+                    api.get('/subcategories'),
+                    api.get(`/products/${id}`)
                 ]);
-                setCategories(categoriesRes.data);
+                
+                setCategories(categoriesRes.data.map(cat => ({ value: cat._id, label: cat.name })));
+                setAllSubcategories(subcategoriesRes.data);
 
-                const product = productsRes.data.find((p) => p._id === id);
-                if (product) {
-                    setName(product.name);
-                    setCategoryId(product.category._id || product.category);
-                    setSubcategoryId(product.subcategory._id || product.subcategory);
-                    setStatus(product.status);
-                    setCurrentImage(product.image);
+                const product = productRes.data;
+                setName(product.name);
+                setCategoryId(product.category._id || product.category);
+                setSelectedSubcategoryIds(product.subcategories.map(sub => sub._id || sub));
+                setStatus(product.status);
+                if (product.image) {
+                    setInitialImageUrl(product.image.url);
                 }
-            } catch (error) {
-                console.error('Error fetching data:', error);
+            } catch (err) {
+                console.error('Error fetching data:', err);
+                setError('Failed to load product data.');
             }
         };
         fetchData();
     }, [id]);
 
     useEffect(() => {
-        const fetchSubcategories = async () => {
-            if (!categoryId) return;
-            try {
-                const { data } = await api.get('/subcategories');
-                const filtered = data.filter(sub => sub.category._id === categoryId || sub.category === categoryId);
-                setSubcategories(filtered);
-            } catch (error) {
-                console.error('Error fetching subcategories:', error);
-            }
-        };
-        fetchSubcategories();
-    }, [categoryId]);
+        if (categoryId) {
+            setFilteredSubcategories(
+                allSubcategories
+                    .filter(sub => sub.category && sub.category._id === categoryId)
+                    .map(sub => ({ value: sub._id, label: sub.name }))
+            );
+        } else {
+            setFilteredSubcategories([]);
+        }
+    }, [categoryId, allSubcategories]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+
+        if (!name || !categoryId || selectedSubcategoryIds.length === 0) {
+            setError('Product name, category, and at least one subcategory are required.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('name', name);
         formData.append('category', categoryId);
-        formData.append('subcategory', subcategoryId);
+        selectedSubcategoryIds.forEach(subId => {
+            formData.append('subcategories[]', subId); // Send as array
+        });
         formData.append('status', status);
-        if (image) {
-            formData.append('image', image);
+        if (imageFile) {
+            formData.append('image', imageFile);
         }
 
         try {
@@ -71,115 +92,98 @@ const EditProduct = () => {
                 },
             });
             navigate('/products');
-        } catch (error) {
-            console.error('Error updating product:', error);
+        } catch (err) {
+            console.error('Error updating product:', err);
+            setError('Failed to update product. Please try again.');
         }
     };
 
+    const statusOptions = [
+        { value: 'Active', label: 'Active' },
+        { value: 'Inactive', label: 'Inactive' },
+    ];
+
     return (
-        <div className="space-y-6">
-            <div className="flex items-center space-x-4">
-                <Link to="/products" className="text-gray-600 hover:text-gray-900">
+        <div className="space-y-md">
+            <div className="flex items-center gap-sm">
+                <Button variant="ghost" onClick={() => navigate('/products')} className="px-2">
                     <ArrowLeft className="h-6 w-6" />
-                </Link>
-                <h1 className="text-2xl font-bold text-gray-800">Edit Product</h1>
+                </Button>
+                <h1 className="text-title font-semibold">Edit Product</h1>
             </div>
 
-            <div className="bg-white shadow-sm rounded-lg border border-gray-200 p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                                Category
-                            </label>
-                            <select
-                                id="category"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                value={categoryId}
-                                onChange={(e) => setCategoryId(e.target.value)}
-                            >
-                                {categories.map((category) => (
-                                    <option key={category._id} value={category._id}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700">
-                                Subcategory
-                            </label>
-                            <select
-                                id="subcategory"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                value={subcategoryId}
-                                onChange={(e) => setSubcategoryId(e.target.value)}
-                            >
-                                {subcategories.map((subcategory) => (
-                                    <option key={subcategory._id} value={subcategory._id}>
-                                        {subcategory.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                Product Name
-                            </label>
-                            <input
-                                type="text"
-                                id="name"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-                                Image {currentImage && '(Leave empty to keep current)'}
-                            </label>
-                            <div className="mt-1 flex items-center">
-                                {currentImage && (
-                                    <img src={currentImage} alt="Current" className="h-8 w-8 mr-2 rounded object-cover" />
-                                )}
-                                <input
-                                    type="file"
-                                    id="image"
-                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#5C218B] file:text-white hover:file:bg-[#4a1a70]"
-                                    onChange={(e) => setImage(e.target.files[0])}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                                Status
-                            </label>
-                            <select
-                                id="status"
-                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                            >
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
+            <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-lg">
+                <form onSubmit={handleSubmit} className="space-y-md">
+                    <div>
+                        <label htmlFor="name" className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Product Name <span className="text-error">*</span>
+                        </label>
+                        <Input
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
                     </div>
 
-                    <div className="flex justify-end space-x-3">
-                        <Link
-                            to="/products"
-                            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5C218B]"
-                        >
+                    <div>
+                        <label htmlFor="category" className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Category <span className="text-error">*</span>
+                        </label>
+                        <Dropdown
+                            id="category"
+                            options={categories}
+                            selected={categoryId}
+                            onChange={(option) => setCategoryId(option.value)}
+                            placeholder="Select a category"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="subcategories" className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Subcategories <span className="text-error">*</span>
+                        </label>
+                        <MultiSelectDropdown
+                            id="subcategories"
+                            options={filteredSubcategories}
+                            selected={selectedSubcategoryIds}
+                            onChange={setSelectedSubcategoryIds}
+                            placeholder="Select subcategories"
+                            dependsOn={categoryId}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Image
+                        </label>
+                        <ImageUpload
+                            onFileSelect={setImageFile}
+                            initialPreview={initialImageUrl}
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="status" className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Status <span className="text-error">*</span>
+                        </label>
+                        <Dropdown
+                            id="status"
+                            options={statusOptions}
+                            selected={status}
+                            onChange={(option) => setStatus(option.value)}
+                        />
+                    </div>
+
+                    {error && <p className="text-error text-sm">{error}</p>}
+
+                    <div className="flex justify-end gap-sm pt-md">
+                        <Button variant="secondary" onClick={() => navigate('/products')}>
                             Cancel
-                        </Link>
-                        <button
-                            type="submit"
-                            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5C218B] hover:bg-[#4a1a70] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5C218B]"
-                        >
-                            Save
-                        </button>
+                        </Button>
+                        <Button type="submit" variant="primary">
+                            Save Changes
+                        </Button>
                     </div>
                 </form>
             </div>

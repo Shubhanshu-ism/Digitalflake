@@ -11,12 +11,12 @@ const Button = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'h-input px-lg text-body font-semibold transition-all duration-150 ease-out flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50';
+  const baseStyles = 'h-button px-lg text-body font-semibold transition-all duration-fast ease-out flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/30';
 
   const variants = {
-    primary: 'bg-primary text-white rounded-pill shadow-md hover:brightness-90 hover:scale-[1.02] active:brightness-[0.85]',
-    secondary: 'bg-neutral-white border border-neutral-light text-neutral-dark rounded-pill hover:brightness-95 hover:scale-[1.02] active:brightness-[0.9]',
-    ghost: 'bg-transparent text-neutral-dark rounded-standard hover:bg-gray-100',
+    primary: 'bg-primary text-neutral-0 rounded-pill shadow-button-primary hover:brightness-90 hover:scale-[1.02] active:brightness-[0.85]',
+    secondary: 'bg-neutral-0 border border-neutral-100 text-neutral-500 rounded-pill hover:brightness-95 hover:scale-[1.02] active:brightness-[0.9]',
+    ghost: 'bg-transparent text-neutral-500 rounded-sm hover:bg-neutral-100/50',
   };
 
   const disabledStyles = 'disabled:opacity-50 disabled:cursor-not-allowed';

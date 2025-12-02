@@ -1,52 +1,100 @@
 import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, ArrowUpDown } from 'lucide-react';
+import clsx from 'clsx';
 
-const Table = ({ columns, data, onEdit, onDelete }) => {
+const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
+    
+    const renderCell = (row, col) => {
+        const value = col.accessor.split('.').reduce((o, i) => o?.[i], row);
+
+        if (col.render) {
+            return col.render(row);
+        }
+
+        switch (col.type) {
+            case 'image':
+                return (
+                    <img
+                        src={value || 'https://via.placeholder.com/40'}
+                        alt={row.name || ''}
+                        className="h-10 w-10 rounded-standard object-cover"
+                    />
+                );
+            case 'status':
+                return (
+                    <span
+                        className={clsx(
+                            'font-medium',
+                            value === 'Active' ? 'text-success' : 'text-error'
+                        )}
+                    >
+                        {value}
+                    </span>
+                );
+            default:
+                return value;
+        }
+    };
+    
     return (
-        <div className="overflow-x-auto bg-white shadow-sm rounded-lg border border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-[#FFF8B7]">
-                    <tr>
-                        {columns.map((col, index) => (
-                            <th
-                                key={index}
-                                scope="col"
-                                className="px-6 py-3 text-left text-sm font-semibold text-gray-900 tracking-wider"
-                            >
-                                {col.header}
-                            </th>
-                        ))}
-                        <th scope="col" className="px-6 py-3 text-right text-sm font-semibold text-gray-900 tracking-wider">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {data.map((row, rowIndex) => (
-                        <tr key={rowIndex} className="hover:bg-gray-50">
-                            {columns.map((col, colIndex) => (
-                                <td key={colIndex} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {col.render ? col.render(row) : row[col.accessor]}
-                                </td>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden border border-neutral-light">
+            <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-neutral-light">
+                    <thead className="bg-neutral-lighter">
+                        <tr className="h-[48px]">
+                            {columns.map((col) => (
+                                <th
+                                    key={col.header}
+                                    scope="col"
+                                    className="px-sm py-3 text-left text-caption font-semibold text-neutral-darkest"
+                                    style={{ width: col.width }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {col.header}
+                                        {col.sortable && (
+                                            <button onClick={() => onSort && onSort(col.accessor)}>
+                                                <ArrowUpDown className="h-4 w-4 text-neutral-medium" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </th>
                             ))}
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button
-                                    onClick={() => onEdit(row)}
-                                    className="text-gray-400 hover:text-gray-600 mx-2"
-                                >
-                                    <Edit className="h-5 w-5" />
-                                </button>
-                                <button
-                                    onClick={() => onDelete(row)}
-                                    className="text-gray-400 hover:text-red-600 mx-2"
-                                >
-                                    <Trash2 className="h-5 w-5" />
-                                </button>
-                            </td>
+                            <th scope="col" className="px-sm py-3 text-center text-caption font-semibold text-neutral-darkest" style={{ width: '100px' }}>
+                                Actions
+                            </th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="divide-y divide-neutral-light">
+                        {data.map((row) => (
+                            <tr key={row._id} className="h-table-row transition-colors duration-150 hover:bg-gray-50">
+                                {columns.map((col) => (
+                                    <td key={col.accessor} className="px-sm py-3 text-body text-neutral-dark">
+                                        {renderCell(row, col)}
+                                    </td>
+                                ))}
+                                <td className="px-sm py-3 text-center">
+                                    <div className="flex items-center justify-center gap-3">
+                                        <button
+                                            onClick={() => onEdit(row)}
+                                            className="text-neutral-dark hover:text-primary transition-colors"
+                                            aria-label={`Edit ${row.name}`}
+                                        >
+                                            <Edit className="h-5 w-5" />
+                                        </button>
+                                        <button
+                                            onClick={() => onDelete(row)}
+                                            className="text-neutral-dark hover:text-error transition-colors"
+                                            aria-label={`Delete ${row.name}`}
+                                        >
+                                            <Trash2 className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

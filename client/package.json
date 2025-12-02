@@ -13,6 +13,7 @@
         "axios": "^1.6.7",
         "clsx": "^2.1.0",
         "lucide-react": "^0.344.0",
+        "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-data-grid": "7.0.0-beta.44",
         "react-dom": "^18.2.0",

@@ -25,7 +25,7 @@ const Layout = () => {
     };
 
     return (
-        <div className="min-h-screen bg-app-background">
+        <div className="min-h-screen bg-neutral-50">
             {/* Header */}
             <header className="fixed top-0 left-0 w-full h-header bg-primary shadow-md z-[100] flex items-center justify-between px-md">
                 <div className="flex items-center">

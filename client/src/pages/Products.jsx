@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Table from '../components/Table';
-import StatusBadge from '../components/StatusBadge';
 import DeleteModal from '../components/DeleteModal';
-import { Plus } from 'lucide-react';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import { Plus, Box, Search } from 'lucide-react';
 import api from '../api/axios';
-import { Link, useNavigate } from 'react-router-dom';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedItem, setSelectedItem] = useState(null);
     const [search, setSearch] = useState('');
 
     const fetchProducts = async (searchTerm = '') => {
         try {
+            // Assuming the API can handle a search query
             const { data } = await api.get(`/products?search=${searchTerm}`);
             setProducts(data);
         } catch (error) {
@@ -30,58 +32,56 @@ const Products = () => {
     }, [search]);
 
     const columns = [
-        { header: 'ID', accessor: '_id', render: (row) => row._id.substring(row._id.length - 6) },
-        { header: 'Name', accessor: 'name' },
-        { header: 'Category', accessor: 'category', render: (row) => row.category?.name || 'N/A' },
-        { header: 'Subcategory', accessor: 'subcategory', render: (row) => row.subcategory?.name || 'N/A' },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: (row) => <StatusBadge status={row.status} />,
-        },
+        { header: 'ID', accessor: '_id', width: '100px', sortable: true, render: (row) => row._id.substring(row._id.length - 6) },
+        { header: 'Product Name', accessor: 'name', width: 'flex-1', sortable: true },
+        { header: 'Image', accessor: 'image.url', width: '80px', sortable: false, type: 'image' },
+        { header: 'Subcategory', accessor: 'subcategory.name', width: '180px', sortable: true },
+        { header: 'Category', accessor: 'category.name', width: '180px', sortable: true },
+        { header: 'Status', accessor: 'status', width: '120px', sortable: true, type: 'status' },
     ];
 
     const navigate = useNavigate();
 
-    const handleEdit = (product) => {
-        navigate(`/products/edit/${product._id}`);
+    const handleEdit = (item) => {
+        navigate(`/products/edit/${item._id}`);
     };
 
-    const handleDeleteClick = (product) => {
-        setSelectedProduct(product);
+    const handleDeleteClick = (item) => {
+        setSelectedItem(item);
         setIsDeleteModalOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
         try {
-            await api.delete(`/products/${selectedProduct._id}`);
+            await api.delete(`/products/${selectedItem._id}`);
             setIsDeleteModalOpen(false);
-            fetchProducts();
+            fetchProducts(search); // Refresh list
         } catch (error) {
             console.error('Error deleting product:', error);
         }
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-md">
             <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
-                    <h1 className="text-2xl font-bold text-gray-800">Products</h1>
-                    <div className="relative">
-                        <input
-                            type="text"
+                <div className="flex items-center gap-sm">
+                    <Box className="h-6 w-6 text-neutral-dark" />
+                    <h1 className="text-title font-semibold">Products</h1>
+                </div>
+                <div className="flex items-center gap-sm">
+                    <div className="w-[280px]">
+                        <Input
                             placeholder="Search..."
-                            className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5C218B]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
+                            icon={Search}
                         />
-                        <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
+                    <Button variant="primary" onClick={() => navigate('/products/add')}>
+                        <Plus className="h-5 w-5 mr-2" />
+                        Add New
+                    </Button>
                 </div>
-                <Link to="/products/add" className="flex items-center px-4 py-2 bg-[#5C218B] text-white rounded-md hover:bg-[#4a1a70]">
-                    <Plus className="h-5 w-5 mr-2" />
-                    Add New
-                </Link>
             </div>
 
             <Table
@@ -95,8 +95,8 @@ const Products = () => {
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
-                title="Delete"
-                message="Are you sure you want to delete?"
+                title="Delete Product"
+                message={`Are you sure you want to delete the product "${selectedItem?.name}"? This action cannot be undone.`}
             />
         </div>
     );

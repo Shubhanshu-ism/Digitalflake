@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Table from '../components/Table';
-import StatusBadge from '../components/StatusBadge';
 import DeleteModal from '../components/DeleteModal';
-import { Plus } from 'lucide-react';
+import Button from '../components/Button';
+import Input from '../components/Input';
+import { Plus, Grid, Search } from 'lucide-react';
 import api from '../api/axios';
-// 
 
 const Category = () => {
     const [categories, setCategories] = useState([]);
@@ -31,14 +31,10 @@ const Category = () => {
     }, [search]);
 
     const columns = [
-        { header: 'ID', accessor: '_id', render: (row) => row._id.substring(row._id.length - 6) }, // Show last 6 chars of ID
-        { header: 'Name', accessor: 'name' },
-        { header: 'Description', accessor: 'description' },
-        {
-            header: 'Status',
-            accessor: 'status',
-            render: (row) => <StatusBadge status={row.status} />,
-        },
+        { header: 'ID', accessor: '_id', width: '100px', sortable: true, render: (row) => row._id.substring(row._id.length - 6) },
+        { header: 'Name', accessor: 'name', width: 'flex-1', sortable: true },
+        { header: 'Image', accessor: 'image.url', width: '80px', sortable: false, type: 'image' },
+        { header: 'Status', accessor: 'status', width: '120px', sortable: true, type: 'status' },
     ];
 
     const navigate = useNavigate();
@@ -56,32 +52,34 @@ const Category = () => {
         try {
             await api.delete(`/categories/${selectedCategory._id}`);
             setIsDeleteModalOpen(false);
-            fetchCategories(); // Refresh list
+            fetchCategories(search); // Refresh list
         } catch (error) {
             console.error('Error deleting category:', error);
         }
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-md">
+            {/* Page Header */}
             <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
-                    <h1 className="text-2xl font-bold text-gray-800">Category</h1>
-                    <div className="relative">
-                        <input
-                            type="text"
+                <div className="flex items-center gap-sm">
+                    <Grid className="h-6 w-6 text-neutral-dark" />
+                    <h1 className="text-title font-semibold">Categories</h1>
+                </div>
+                <div className="flex items-center gap-sm">
+                    <div className="w-[280px]">
+                        <Input 
                             placeholder="Search..."
-                            className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#5C218B]"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
+                            icon={Search}
                         />
-                        <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
+                    <Button variant="primary" onClick={() => navigate('/category/add')}>
+                        <Plus className="h-5 w-5 mr-2" />
+                        Add New
+                    </Button>
                 </div>
-                <Link to="/category/add" className="flex items-center px-4 py-2 bg-[#5C218B] text-white rounded-md hover:bg-[#4a1a70]">
-                    <Plus className="h-5 w-5 mr-2" />
-                    Add New
-                </Link>
             </div>
 
             <Table
@@ -95,8 +93,8 @@ const Category = () => {
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
-                title="Delete"
-                message="Are you sure you want to delete?"
+                title="Delete Category"
+                message={`Are you sure you want to delete the category "${selectedCategory?.name}"? This action cannot be undone.`}
             />
         </div>
     );
