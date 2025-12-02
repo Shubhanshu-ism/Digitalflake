@@ -22,6 +22,20 @@ router.get('/', protect, asyncHandler(async (req, res) => {
     res.json(categories);
 }));
 
+// @desc    Get category by ID
+// @route   GET /api/categories/:id
+// @access  Private
+router.get('/:id', protect, asyncHandler(async (req, res) => {
+    const category = await Category.findById(req.params.id);
+
+    if (category) {
+        res.json(category);
+    } else {
+        res.status(404);
+        throw new Error('Category not found');
+    }
+}));
+
 // @desc    Create a category
 // @route   POST /api/categories
 // @access  Private

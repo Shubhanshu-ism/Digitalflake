@@ -22,6 +22,20 @@ router.get('/', protect, async (req, res) => {
     res.json(subcategories);
 });
 
+// @desc    Get subcategory by ID
+// @route   GET /api/subcategories/:id
+// @access  Private
+router.get('/:id', protect, async (req, res) => {
+    const subcategory = await Subcategory.findById(req.params.id);
+
+    if (subcategory) {
+        res.json(subcategory);
+    } else {
+        res.status(404);
+        throw new Error('Subcategory not found');
+    }
+});
+
 // @desc    Create a subcategory
 // @route   POST /api/subcategories
 // @access  Private

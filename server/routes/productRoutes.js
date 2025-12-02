@@ -24,6 +24,20 @@ router.get('/', protect, async (req, res) => {
     res.json(products);
 });
 
+// @desc    Get product by ID
+// @route   GET /api/products/:id
+// @access  Private
+router.get('/:id', protect, async (req, res) => {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+        res.json(product);
+    } else {
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 // @desc    Create a product
 // @route   POST /api/products
 // @access  Private

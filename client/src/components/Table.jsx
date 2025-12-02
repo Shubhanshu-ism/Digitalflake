@@ -42,7 +42,7 @@ const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
             {/* Desktop View */}
             <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-neutral-light">
-                    <thead className="bg-neutral-lighter">
+                    <thead className="bg-accent">
                         <tr className="h-[48px]">
                             {columns.map((col) => (
                                 <th
