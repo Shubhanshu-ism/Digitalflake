@@ -1,4 +1,4 @@
-```javascript
+
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -115,4 +115,4 @@ const Login = () => {
 };
 
 export default Login;
-```
+
