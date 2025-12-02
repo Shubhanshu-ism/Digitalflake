@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import loginBg from '../assets/login_bg.png';
+import Button from '../components/Button';
+import Input from '../components/Input';
 
 const Signup = () => {
     const [name, setName] = useState('');
@@ -13,118 +15,103 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+
+        if (!name || !email || !password) {
+            setError('Please fill in all fields.');
+            return;
+        }
+
         try {
             await register(name, email, password);
             navigate('/');
         } catch (err) {
-            setError('Error creating account');
+            setError('Error creating account. Please try again.');
         }
     };
 
     return (
-        <div className="min-h-screen flex bg-gray-100">
-            {/* Left Side - Form */}
-            <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white w-full lg:w-1/2 max-w-2xl z-10 shadow-xl">
-                <div className="mx-auto w-full max-w-sm lg:w-96">
-                    <div className="text-center lg:text-left">
-                        {/* Logo Placeholder */}
-                        <div className="flex items-center justify-center lg:justify-start mb-8">
-                            <div className="h-10 w-10 bg-[#5C218B] rounded flex items-center justify-center text-white font-bold text-xl mr-2">D</div>
-                            <span className="text-2xl font-bold text-[#5C218B]">digitalflake</span>
-                        </div>
-                        <h2 className="mt-6 text-2xl font-normal text-gray-500">
-                            Create your account
-                        </h2>
-                    </div>
-
-                    <div className="mt-8">
-                        <form action="#" method="POST" className="space-y-6" onSubmit={handleSubmit}>
-                            <div>
-                                <label htmlFor="name" className="sr-only">
-                                    Full Name
-                                </label>
-                                <div className="mt-1 relative rounded-md shadow-sm">
-                                    <input
-                                        id="name"
-                                        name="name"
-                                        type="text"
-                                        autoComplete="name"
-                                        required
-                                        className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                        placeholder="Full Name"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="email" className="sr-only">
-                                    Email-id
-                                </label>
-                                <div className="mt-1 relative rounded-md shadow-sm">
-                                    <input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        required
-                                        className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                        placeholder="Email-id"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="sr-only">
-                                    Password
-                                </label>
-                                <div className="mt-1 relative rounded-md shadow-sm">
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        autoComplete="new-password"
-                                        required
-                                        className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-[#5C218B] focus:border-[#5C218B] sm:text-sm"
-                                        placeholder="Password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-
-                            <div>
-                                <button
-                                    type="submit"
-                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5C218B] hover:bg-[#4a1a70] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5C218B]"
-                                >
-                                    Sign up
-                                </button>
-                            </div>
-                            <div className="text-center">
-                                <Link to="/login" className="text-[#5C218B] hover:text-[#4a1a70]">
-                                    Already have an account? Sign in
-                                </Link>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        <div className="min-h-screen relative flex items-center justify-center bg-[#5C218B]/20 overflow-hidden">
+            {/* Background Image/Illustration */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center">
+                <img
+                    className="w-full h-full object-cover opacity-50 lg:opacity-100 lg:object-contain lg:scale-90"
+                    src={loginBg}
+                    alt="Background"
+                />
+                {/* Overlay to ensure text readability if needed */}
+                <div className="absolute inset-0 bg-primary/10 mix-blend-multiply lg:hidden"></div>
             </div>
 
-            {/* Right Side - Illustration */}
-            <div className="hidden lg:block relative w-0 flex-1 bg-[#F5F5F5]">
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <img
-                        className="h-3/4 w-auto object-contain"
-                        src={loginBg}
-                        alt="Login Illustration"
-                    />
+            {/* Signup Card */}
+            <div className="relative z-10 w-full max-w-[480px] bg-white rounded-3xl shadow-2xl p-8 md:p-12 mx-4">
+                <div className="flex flex-col items-center mb-8">
+                    {/* Logo */}
+                    <div className="flex items-center mb-6">
+                        <div className="h-10 w-10 bg-primary rounded-standard flex items-center justify-center text-white font-bold text-xl mr-3 shadow-sm">
+                            D
+                        </div>
+                        <span className="text-2xl font-bold text-primary tracking-tight">digitalflake</span>
+                    </div>
+
+                    {/* Header Text */}
+                    <h2 className="text-2xl font-normal text-neutral-700 text-center">
+                        Create your account
+                    </h2>
                 </div>
+
+                <form className="space-y-8" onSubmit={handleSubmit}>
+                    <div className="space-y-6">
+                        <Input
+                            id="name"
+                            name="name"
+                            type="text"
+                            label="Full Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            error={!!error}
+                        />
+
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            label="Email-id"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            error={!!error}
+                        />
+
+                        <Input
+                            id="password"
+                            name="password"
+                            type="password"
+                            label="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            error={!!error}
+                        />
+                    </div>
+
+                    {error && (
+                        <div className="text-error text-sm text-center font-medium bg-error/10 py-2 rounded-md">
+                            {error}
+                        </div>
+                    )}
+
+                    <Button type="submit" variant="primary" className="w-full py-3 text-lg shadow-lg bg-primary hover:bg-primary-dark">
+                        Sign up
+                    </Button>
+
+                    <div className="text-center mt-6">
+                        <p className="text-sm text-neutral-500">
+                            Already have an account?{' '}
+                            <Link to="/login" className="font-semibold text-primary hover:text-primary-dark transition-colors">
+                                Log In
+                            </Link>
+                        </p>
+                    </div>
+                </form>
             </div>
         </div>
     );

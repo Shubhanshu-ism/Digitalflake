@@ -18,8 +18,8 @@ const Login = () => {
     e.preventDefault();
     setError('');
     if (!email || !password) {
-        setError('Please enter both email and password.');
-        return;
+      setError('Please enter both email and password.');
+      return;
     }
     try {
       await login(email, password);
@@ -30,31 +30,42 @@ const Login = () => {
   };
 
   return (
-    <>
-    <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Left Panel (Form) */}
-      <div className="flex flex-col items-center justify-center bg-neutral-0 px-4 py-12">
-        <div className="w-full max-w-sm space-y-md">
+    <div className="min-h-screen relative flex items-center justify-center bg-[#5C218B]/20 overflow-hidden">
+      {/* Background Image/Illustration */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center">
+        <img
+          className="w-full h-full object-cover opacity-50 lg:opacity-100 lg:object-contain lg:scale-90"
+          src={loginBg}
+          alt="Background"
+        />
+        {/* Overlay to ensure text readability if needed, though design shows clean illustration */}
+        <div className="absolute inset-0 bg-primary/10 mix-blend-multiply lg:hidden"></div>
+      </div>
+
+      {/* Login Card */}
+      <div className="relative z-10 w-full max-w-[480px] bg-white rounded-3xl shadow-2xl p-8 md:p-12 mx-4">
+        <div className="flex flex-col items-center mb-8">
           {/* Logo */}
-          <div className="flex justify-center mb-md">
-            <div className="flex items-center">
-              <div className="h-10 w-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl mr-3">D</div>
-              <span className="text-heading font-bold text-primary">digitalflake</span>
+          <div className="flex items-center mb-6">
+            <div className="h-10 w-10 bg-primary rounded-standard flex items-center justify-center text-white font-bold text-xl mr-3 shadow-sm">
+              D
             </div>
+            <span className="text-2xl font-bold text-primary tracking-tight">digitalflake</span>
           </div>
 
-          {/* Welcome Text */}
-          <h2 className="text-center text-title text-neutral-700">
+          {/* Header Text */}
+          <h2 className="text-2xl font-normal text-neutral-700 text-center">
             Welcome to Digitalflake admin
           </h2>
+        </div>
 
-          <form className="space-y-md" onSubmit={handleSubmit}>
+        <form className="space-y-8" onSubmit={handleSubmit}>
+          <div className="space-y-6">
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Email-id"
-              required
+              label="Email-id"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={!!error}
@@ -64,52 +75,48 @@ const Login = () => {
               id="password"
               name="password"
               type="password"
-              placeholder="Password"
-              required
+              label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={!!error}
-            />
-
-            <div className="flex items-center justify-end text-sm -mt-sm mb-md">
-                <button type="button" onClick={() => setIsModalOpen(true)} className="font-medium text-primary hover:text-primary/80">
-                    Forgot Password?
+              rightElement={
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-primary hover:text-primary-dark focus:outline-none"
+                >
+                  Forgot Password?
                 </button>
-            </div>
+              }
+            />
+          </div>
 
-            {error && (
-              <div className="text-error text-caption text-center -mt-sm">
-                {error}
-              </div>
-            )}
-
-            <Button type="submit" variant="primary" className="w-full">
-              Log In
-            </Button>
-            
-            <div className="text-center !mt-md">
-              <p className="text-body text-neutral-500">
-                Don't have an account?{' '}
-                <Link to="/signup" className="font-semibold text-primary hover:text-primary/80">
-                  Sign Up
-                </Link>
-              </p>
+          {error && (
+            <div className="text-error text-sm text-center font-medium bg-error/10 py-2 rounded-md">
+              {error}
             </div>
-          </form>
-        </div>
+          )}
+
+          <Button type="submit" variant="primary" className="w-full py-3 text-lg shadow-lg bg-primary hover:bg-primary-dark">
+            Log In
+          </Button>
+
+          <div className="text-center mt-6">
+            <p className="text-sm text-neutral-500">
+              Don't have an account?{' '}
+              <Link to="/signup" className="font-semibold text-primary hover:text-primary-dark transition-colors">
+                Sign Up
+              </Link>
+            </p>
+          </div>
+        </form>
       </div>
 
-      {/* Right Panel (Illustration) */}
-      <div className="hidden lg:flex items-center justify-center relative bg-gradient-to-br from-[#F0E6F6] to-[#E8D5F0]">
-        <img
-          className="max-w-lg w-auto object-contain"
-          src={loginBg}
-          alt="Login Illustration"
-        />
-      </div>
+      <ForgotPasswordModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
-    <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-    </>
   );
 };
 

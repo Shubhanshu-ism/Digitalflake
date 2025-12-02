@@ -35,7 +35,7 @@ const Subcategory = () => {
         { header: 'ID', accessor: '_id', width: '100px', sortable: true, render: (row) => row._id.substring(row._id.length - 6) },
         { header: 'Subcategory Name', accessor: 'name', width: 'flex-1', sortable: true },
         { header: 'Category Name', accessor: 'category.name', width: '200px', sortable: true },
-        { header: 'Image', accessor: 'image.url', width: '80px', sortable: false, type: 'image' },
+        { header: 'Image', accessor: 'image', width: '80px', sortable: false, type: 'image' },
         { header: 'Status', accessor: 'status', width: '120px', sortable: true, type: 'status' },
     ];
 

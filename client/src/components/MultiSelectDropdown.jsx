@@ -61,7 +61,7 @@ const MultiSelectDropdown = ({
         aria-expanded={isOpen}
       >
         <span className="text-body text-neutral-darkest overflow-hidden whitespace-nowrap text-ellipsis mr-2">
-            {selectedLabels.length > 0 ? `${selectedLabels.length} selected` : placeholder}
+          {selectedLabels.length > 0 ? `${selectedLabels.length} selected` : placeholder}
         </span>
         <ChevronDown
           className={clsx(
@@ -86,8 +86,8 @@ const MultiSelectDropdown = ({
                 <div
                   key={option.value}
                   className={clsx(
-                    'h-10 px-4 flex items-center text-body cursor-pointer hover:bg-neutral-lighter',
-                    isSelected && 'bg-neutral-lighter' // selected background
+                    'h-10 px-4 flex items-center text-body cursor-pointer hover:bg-neutral-100',
+                    isSelected && 'bg-neutral-200' // selected background
                   )}
                   onClick={() => handleSelect(option)}
                   role="option"

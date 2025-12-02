@@ -6,13 +6,12 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import ImageUpload from '../components/ImageUpload';
 import Dropdown from '../components/Dropdown';
-import MultiSelectDropdown from '../components/MultiSelectDropdown';
 
 const AddProduct = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [categoryId, setCategoryId] = useState('');
-    const [selectedSubcategoryIds, setSelectedSubcategoryIds] = useState([]);
+    const [subcategoryId, setSubcategoryId] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [categories, setCategories] = useState([]);
     const [allSubcategories, setAllSubcategories] = useState([]); // All subcategories
@@ -46,7 +45,7 @@ const AddProduct = () => {
         } else {
             setFilteredSubcategories([]);
         }
-        setSelectedSubcategoryIds([]); // Clear selected subcategories when category changes
+        setSubcategoryId(''); // Clear selected subcategory when category changes
     }, [categoryId, allSubcategories]);
 
 
@@ -54,17 +53,15 @@ const AddProduct = () => {
         e.preventDefault();
         setError(null);
 
-        if (!name || !categoryId || selectedSubcategoryIds.length === 0) {
-            setError('Product name, category, and at least one subcategory are required.');
+        if (!name || !categoryId || !subcategoryId) {
+            setError('Product name, category, and subcategory are required.');
             return;
         }
 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('category', categoryId);
-        selectedSubcategoryIds.forEach(subId => {
-            formData.append('subcategories[]', subId); // Send as array
-        });
+        formData.append('subcategory', subcategoryId);
         if (imageFile) {
             formData.append('image', imageFile);
         }
@@ -120,16 +117,16 @@ const AddProduct = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="subcategories" className="block text-body font-medium text-neutral-darkest mb-xs">
-                            Subcategories <span className="text-error">*</span>
+                        <label htmlFor="subcategory" className="block text-body font-medium text-neutral-darkest mb-xs">
+                            Subcategory <span className="text-error">*</span>
                         </label>
-                        <MultiSelectDropdown
-                            id="subcategories"
+                        <Dropdown
+                            id="subcategory"
                             options={filteredSubcategories}
-                            selected={selectedSubcategoryIds}
-                            onChange={setSelectedSubcategoryIds}
-                            placeholder="Select subcategories"
-                            dependsOn={categoryId}
+                            selected={subcategoryId}
+                            onChange={(option) => setSubcategoryId(option.value)}
+                            placeholder="Select a subcategory"
+                            disabled={!categoryId}
                         />
                     </div>
 

@@ -34,8 +34,8 @@ const Products = () => {
     const columns = [
         { header: 'ID', accessor: '_id', width: '100px', sortable: true, render: (row) => row._id.substring(row._id.length - 6) },
         { header: 'Product Name', accessor: 'name', width: 'flex-1', sortable: true },
-        { header: 'Image', accessor: 'image.url', width: '80px', sortable: false, type: 'image' },
-        { header: 'Subcategory', accessor: 'subcategory.name', width: '180px', sortable: true },
+        { header: 'Image', accessor: 'image', width: '80px', sortable: false, type: 'image' },
+        { header: 'Subcategory Name', accessor: 'subcategory.name', width: '180px', sortable: true },
         { header: 'Category', accessor: 'category.name', width: '180px', sortable: true },
         { header: 'Status', accessor: 'status', width: '120px', sortable: true, type: 'status' },
     ];

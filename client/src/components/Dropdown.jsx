@@ -61,8 +61,8 @@ const Dropdown = ({
             <div
               key={option.value}
               className={clsx(
-                'h-10 px-4 flex items-center justify-between text-body cursor-pointer hover:bg-neutral-lighter',
-                option.value === selected && 'bg-accent font-medium'
+                'h-10 px-4 flex items-center justify-between text-body cursor-pointer bg-white hover:bg-neutral-100',
+                option.value === selected && 'bg-neutral-200 font-medium'
               )}
               onClick={() => handleSelect(option)}
               role="option"

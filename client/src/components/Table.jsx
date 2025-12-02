@@ -13,9 +13,10 @@ const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
 
         switch (col.type) {
             case 'image':
+                const imageUrl = value ? (value.startsWith('http') ? value : `http://localhost:5001${value}`) : 'https://via.placeholder.com/40';
                 return (
                     <img
-                        src={value || 'https://via.placeholder.com/40'}
+                        src={imageUrl}
                         alt={row.name || ''}
                         className="h-10 w-10 rounded-standard object-cover"
                     />
