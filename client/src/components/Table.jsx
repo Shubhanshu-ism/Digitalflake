@@ -3,7 +3,7 @@ import { Edit, Trash2, ArrowUpDown } from 'lucide-react';
 import clsx from 'clsx';
 
 const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
-    
+
     const renderCell = (row, col) => {
         const value = col.accessor.split('.').reduce((o, i) => o?.[i], row);
 
@@ -35,10 +35,11 @@ const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
                 return value;
         }
     };
-    
+
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden border border-neutral-light">
-            <div className="overflow-x-auto">
+            {/* Desktop View */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-neutral-light">
                     <thead className="bg-neutral-lighter">
                         <tr className="h-[48px]">
@@ -94,6 +95,36 @@ const Table = ({ columns, data, onEdit, onDelete, onSort, sortConfig }) => {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile View (Card Layout) */}
+            <div className="md:hidden bg-neutral-50 p-sm space-y-sm">
+                {data.map((row) => (
+                    <div key={row._id} className="bg-white p-sm rounded-lg shadow-sm border border-neutral-light">
+                        <div className="space-y-xs">
+                            {columns.map((col) => (
+                                <div key={col.header} className="flex justify-between items-center">
+                                    <span className="text-caption font-semibold text-neutral-medium">{col.header}</span>
+                                    <span className="text-body text-neutral-dark text-right">{renderCell(row, col)}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex justify-end gap-md mt-sm pt-sm border-t border-neutral-light">
+                            <button
+                                onClick={() => onEdit(row)}
+                                className="flex items-center gap-1 text-neutral-dark hover:text-primary transition-colors text-sm"
+                            >
+                                <Edit className="h-4 w-4" /> Edit
+                            </button>
+                            <button
+                                onClick={() => onDelete(row)}
+                                className="flex items-center gap-1 text-neutral-dark hover:text-error transition-colors text-sm"
+                            >
+                                <Trash2 className="h-4 w-4" /> Delete
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

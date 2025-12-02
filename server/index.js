@@ -1,7 +1,13 @@
-const express = require('express'); // Restart trigger
+const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const fs = require('fs');
+
+// Debug log
+try {
+    fs.writeFileSync('server_debug.log', `Server starting at ${new Date().toISOString()}\n`);
+} catch (e) { }
 
 dotenv.config();
 
@@ -34,8 +40,11 @@ app.get('/', (req, res) => {
     res.send('API is running...');
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    try {
+        fs.appendFileSync('server_debug.log', `Server listening on port ${PORT}\n`);
+    } catch (e) { }
 });
